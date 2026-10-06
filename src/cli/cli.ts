@@ -7,9 +7,6 @@ import url from 'url';
 import crypto from 'crypto';
 import openUrl from 'open';
 import { Command } from 'commander';
-import confirm from '@inquirer/confirm';
-import input from '@inquirer/input';
-import password from '@inquirer/password';
 import request from '../request';
 import base64url from 'base64url';
 import Repl from './repl';
@@ -428,10 +425,13 @@ export class Cli {
    *
    */
   async promptMessage(message: string): Promise<string> {
+    // @inquirer/* is ESM only. This file compiles to CJS, so a static import fails (TS1479).
+    const { default: input } = await import('@inquirer/input');
     return this.prompt(() => input({ message }));
   }
 
   async promptPassword(message: string): Promise<string> {
+    const { default: password } = await import('@inquirer/password');
     return this.prompt(() => password({ message }));
   }
 
@@ -439,6 +439,7 @@ export class Cli {
    *
    */
   async promptConfirm(message: string): Promise<boolean> {
+    const { default: confirm } = await import('@inquirer/confirm');
     return this.prompt(() => confirm({ message }));
   }
 
